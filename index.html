@@ -85,7 +85,7 @@
 
       <div class="strategy-bar">
         <fieldset class="strategy-fieldset">
-          <legend>Trading strategies <span class="legend-hint">pick one or more — signals combine</span></legend>
+          <legend>Allocation strategies <span class="legend-hint">pick one or more — signals combine</span></legend>
           <div class="strategy-options" id="strategy-options"></div>
         </fieldset>
       </div>
@@ -366,6 +366,7 @@
           <nav aria-labelledby="methodology-toc-heading" class="methodology-toc">
             <h3 id="methodology-toc-heading">On this page</h3>
             <ol>
+              <li><a href="#m-abstract">Abstract</a></li>
               <li><a href="#m-model">Stochastic model</a></li>
               <li><a href="#m-calib">Calibration</a></li>
               <li><a href="#m-impl">Numerical implementation</a></li>
@@ -379,6 +380,9 @@
           </nav>
 
           <article class="methodology-article">
+            <h3 id="m-abstract">Abstract</h3>
+            <p>This dashboard implements a Lindblad master-equation inference layer over the global fleet of gate-model and analog quantum processors. The Lindblad open-quantum-system formalism (<cite>Lindblad, 1976</cite>) provides the canonical noise model for superconducting, trapped-ion, and neutral-atom qubits, parameterized by relaxation T1 and dephasing T2 (<cite>Nielsen &amp; Chuang, 2010</cite>). Per-platform T1, T2, and two-qubit gate fidelity are seeded from manufacturer disclosures and peer-reviewed publications including the Willow below-threshold-QEC demonstration (<cite>Acharya et al., 2024</cite>) and Cross et al.'s Quantum Volume benchmark (<cite>Cross et al., 2019</cite>). Pauli-channel approximations were rejected because they cannot reproduce the geometric Bloch-sphere intuition critical for the visualization layer.</p>
+
             <h3 id="m-model">Stochastic model</h3>
             <p>A single qubit interacting with a noisy environment loses quantum coherence on two characteristic timescales: <em>T1</em> (energy relaxation; population decay from |1⟩ to |0⟩) and <em>T2</em> (phase coherence loss). The two are linked by <code>1/T2 = 1/(2T1) + 1/Tφ</code> where <code>Tφ</code> is the pure dephasing time. T2 ≤ 2T1 is a fundamental physical bound. For useful computation we need T2 to vastly exceed the gate operation time.</p>
       <p>The dynamics of a qubit's density matrix <code>ρ</code> under both unitary Hamiltonian <code>H</code> and decoherence is the Lindblad master equation:</p>
