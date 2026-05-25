@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-25T10:22:41.186Z",
+  "generatedAt": "2026-05-25T10:42:51.156Z",
   "source": "synthetic",
   "tickers": {
     "HERON": {
       "ticker": "HERON",
       "price": 2048,
       "prevClose": 2020.0815264892199,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -106,7 +106,7 @@
       "ticker": "CONDOR",
       "price": 1024,
       "prevClose": 1070.7308343512493,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -206,7 +206,7 @@
       "ticker": "WILLOW",
       "price": 4096,
       "prevClose": 4025.134279676877,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -306,7 +306,7 @@
       "ticker": "FORTE",
       "price": 1280,
       "prevClose": 1266.8284767479229,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -406,7 +406,7 @@
       "ticker": "H2",
       "price": 2560,
       "prevClose": 2598.419637924758,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -506,7 +506,7 @@
       "ticker": "ANKAA",
       "price": 512,
       "prevClose": 520.4898991933077,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -606,7 +606,7 @@
       "ticker": "AQUILA",
       "price": 768,
       "prevClose": 744.4408774280819,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -706,7 +706,7 @@
       "ticker": "ATOM",
       "price": 896,
       "prevClose": 920.7912985501092,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -806,7 +806,7 @@
       "ticker": "OSPREY",
       "price": 384,
       "prevClose": 368.8058596442954,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -906,7 +906,7 @@
       "ticker": "ASTRA",
       "price": 640,
       "prevClose": 637.5476916859586,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -1006,7 +1006,7 @@
       "ticker": "MAJORANA",
       "price": 128,
       "prevClose": 135.18117510483196,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
@@ -1106,7 +1106,7 @@
       "ticker": "TENJIN",
       "price": 256,
       "prevClose": 260.3033147327424,
-      "ts": 1779704561186,
+      "ts": 1779705771156,
       "currency": "USD",
       "exchange": "SIM",
       "closes": [
