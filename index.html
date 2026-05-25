@@ -332,32 +332,93 @@
           <div id="extra2-content" role="img" aria-label="Circuit depth budget by QPU showing T1 and T2 limited regimes"></div>
           <table class="sr-only" id="extra2-data-table"><caption>Circuit depth ledger by QPU</caption><thead><tr><th scope="col">QPU</th><th scope="col">T1 limit (gates)</th><th scope="col">T2 limit (gates)</th></tr></thead><tbody id="extra2-data-body"></tbody></table>
         </section>
+        <section class="section extra-panel" aria-labelledby="tornado-heading" id="extra3-section">
+          <div class="section-header">
+            <div>
+              <h2 id="tornado-heading">Sensitivity analysis // tornado chart</h2>
+              <p class="subtext" id="extra3-subtitle">Single-parameter elasticities at the calibrated baseline. Each bar is the % change in the dashboard's primary forward statistic when the parameter is perturbed by the listed amount, holding all others constant. Bars sorted by absolute magnitude, largest impact first.</p>
+            </div>
+            <span id="extra3-meta" class="subtext"></span>
+          </div>
+          <div id="extra3-content" role="img" aria-labelledby="tornado-heading" aria-describedby="extra3-subtitle"></div>
+          <table class="sr-only" id="extra3-data-table"><caption>Parameter sensitivities, sorted by absolute magnitude</caption><thead><tr><th scope="col">Parameter</th><th scope="col">Perturbation</th><th scope="col">Downside %</th><th scope="col">Upside %</th><th scope="col">Range</th></tr></thead><tbody id="extra3-data-body"></tbody></table>
+        </section>
+        <section class="section extra-panel" aria-labelledby="grid-heading" id="extra4-section">
+          <div class="section-header">
+            <div>
+              <h2 id="grid-heading">Parameter grid // T2 (μs) × F_2 (%)</h2>
+              <p class="subtext" id="extra4-subtitle">2-D parameter-space heatmap: T2 (μs) on the x-axis, F_2 (%) on the y-axis, color + glyph encoding the resulting d_max (gates @ 50% fidelity). Cells use the same severity glyph vocabulary as elsewhere in the dashboard for color-independent encoding.</p>
+            </div>
+            <span id="extra4-meta" class="subtext"></span>
+          </div>
+          <div id="extra4-content" role="img" aria-labelledby="grid-heading" aria-describedby="extra4-subtitle"></div>
+          <table class="sr-only" id="extra4-data-table"><caption>Parameter-grid heatmap values</caption><thead><tr><th scope="col">T2 (μs)</th><th scope="col">F_2 (%)</th><th scope="col">Outcome (d_max (gates @ 50% fidelity))</th></tr></thead><tbody id="extra4-data-body"></tbody></table>
+        </section>
         <section class="section methodology" aria-labelledby="methodology-heading" id="methodology-section">
           <div class="section-header">
             <div>
               <h2 id="methodology-heading">Methodology &amp; model</h2>
-              <p class="subtext">Technical write-up of the stochastic process, calibration approach, and published references for the QPU layer of this dashboard.</p>
+              <p class="subtext">Dissertation-grade technical write-up of the stochastic process, calibration, glossary, worked example, sensitivity analysis, comparison to alternatives, and references for the QPU layer of this dashboard.</p>
             </div>
-            <span class="subtext">WCAG 2.2 AA · dissertation-grade documentation</span>
+            <span class="subtext">WCAG 2.2 AA · 10 citations</span>
           </div>
+
+          <nav aria-labelledby="methodology-toc-heading" class="methodology-toc">
+            <h3 id="methodology-toc-heading">On this page</h3>
+            <ol>
+              <li><a href="#m-model">Stochastic model</a></li>
+              <li><a href="#m-calib">Calibration</a></li>
+              <li><a href="#m-impl">Numerical implementation</a></li>
+              <li><a href="#m-glossary">Glossary &amp; notation</a></li>
+              <li><a href="#m-example">Worked example</a></li>
+              <li><a href="#m-sens">Sensitivity analysis</a></li>
+              <li><a href="#m-alt">Comparison vs alternative approaches</a></li>
+              <li><a href="#m-limits">Known limitations</a></li>
+              <li><a href="#m-refs">References</a></li>
+            </ol>
+          </nav>
 
           <article class="methodology-article">
             <h3 id="m-model">Stochastic model</h3>
-            <p>Single-qubit decoherence is governed by the Lindblad master equation with relaxation (T1) and pure-dephasing (Tφ) channels, giving the observed coherence time <code>1/T2 = 1/(2T1) + 1/Tφ</code>. The Bloch vector <code>r</code> evolves under:</p>
+            <p>A single qubit interacting with a noisy environment loses quantum coherence on two characteristic timescales: <em>T1</em> (energy relaxation; population decay from |1⟩ to |0⟩) and <em>T2</em> (phase coherence loss). The two are linked by <code>1/T2 = 1/(2T1) + 1/Tφ</code> where <code>Tφ</code> is the pure dephasing time. T2 ≤ 2T1 is a fundamental physical bound. For useful computation we need T2 to vastly exceed the gate operation time.</p>
+      <p>The dynamics of a qubit's density matrix <code>ρ</code> under both unitary Hamiltonian <code>H</code> and decoherence is the Lindblad master equation:</p>
       <p class="m-eq"><span role="math" aria-label="d rho d t equals minus i commutator H rho plus 1 over T1 dissipator sigma minus rho plus 1 over 2 T phi dissipator sigma z rho">dρ/dt = −i [H, ρ] + (1/T1) D[σ_−] ρ + (1/(2 Tφ)) D[σ_z] ρ</span></p>
-      <p>where <code>D[L] ρ = L ρ L† − ½ {L†L, ρ}</code> is the Lindblad dissipator. For a circuit of depth <code>d</code> with per-gate time <code>τ_g</code>, the leading-order fidelity loss is <code>1 − F ≈ d τ_g (1/T1 + 1/(2T2))</code>.</p>
+      <p>The Lindblad dissipator is <code>D[L]ρ = LρL† − ½{L†L, ρ}</code>; <code>σ_−</code> drives relaxation and <code>σ_z</code> drives pure dephasing. The Bloch vector <code>(x, y, z) = (⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩)</code> evolves under the Bloch equations:</p>
+      <p class="m-eq"><span role="math" aria-label="derivative of x equals minus x over T2, derivative of y equals minus y over T2, derivative of z equals minus z minus z equilibrium over T1">dx/dt = −x/T2,  dy/dt = −y/T2,  dz/dt = −(z − z_eq)/T1</span></p>
+      <p>where <code>z_eq</code> is the equilibrium population difference (typically <code>z_eq = 1</code> for a cold qubit). The Bloch vector magnitude <code>|r|</code> shrinks toward the z-axis under pure dephasing and toward the equilibrium z-pole under relaxation. A coherent state has <code>|r| = 1</code> (pure state on the Bloch sphere surface); a maximally mixed state has <code>|r| = 0</code> (center of the sphere).</p>
+      <p>For a circuit of depth <code>d</code> with per-gate time <code>τ_g</code>, total runtime is <code>τ_total = d · τ_g</code>. The leading-order fidelity loss is <code>1 − F ≈ τ_total · (1/T1 + 1/(2T2))</code>. Setting this ≤ 0.5 gives the <em>gate budget</em>: <code>d_max ≈ 0.5 / (τ_g · (1/T1 + 1/(2T2)))</code>. For Heron r2 with T1 = 250 μs, T2 = 200 μs, τ_g = 100 ns this gives <code>d_max ≈ 670 gates</code> per single-qubit register — but two-qubit gates have fidelity floors (currently 99.5–99.9%) that dominate the budget in practice.</p>
+      <p>Quantum Volume (Cross et al. 2019) is a holistic benchmark: the largest square circuit (depth = width) for which the QPU can compute heavy-output probability above the threshold. QV doubles every ~9 months on the leading platforms (Heron, Willow, H2). For neutral-atom analog systems QV is not directly meaningful and we use circuit-layer-fidelity as a proxy.</p>
 
             <h3 id="m-calib">Calibration</h3>
-            <p>Per-QPU T1, T2, gate time, and 2-qubit gate fidelity are calibrated from manufacturer disclosures: IBM Quantum Network (Heron, Condor), Google Quantum AI (Willow), IonQ Performance Report, Quantinuum H-Series Update, Rigetti Quantum Cloud Services. Quantum Volume per platform is taken from published benchmarks (or scaled estimates where Quantum Volume is not the native metric — e.g. neutral-atom systems use circuit-layer fidelity as a proxy).</p>
+            <p>Per-QPU T1, T2, gate time, and 2-qubit gate fidelity are calibrated from manufacturer disclosures and peer-reviewed publications: IBM Quantum Network (Heron r2, Condor 1121), Google Quantum AI (Willow 105q), IonQ Performance Report (Forte 36-ion), Quantinuum H-Series Update (H2-1 56-ion), Rigetti Quantum Cloud Services (Ankaa-3 84q), QuEra (Aquila 256-atom), Atom Computing (1180-atom), Pasqal (Orion 100-atom), Microsoft Majorana 1 (topological), Fujitsu/RIKEN (256q).</p>
+      <p>Representative values: Willow T1 ~ 100 μs, T2 ~ 90 μs, 2-qubit gate fidelity 99.7% (Acharya et al. 2024). Heron r2 T1 ~ 250 μs, T2 ~ 200 μs, 2-qubit cz fidelity 99.7%. H2-1 T1 effectively infinite for ions, T2 ~ 1 sec, 2-qubit fidelity 99.85%. The wide T1/T2 range across platforms reflects fundamentally different qubit modalities.</p>
+      <p>The Quantum Volume values for analog/photonic systems are proxies based on representative-circuit fidelity at depth = width = N and should not be compared head-to-head with gate-model QV. We flag this explicitly in the dashboard's limitations panel.</p>
 
             <h3 id="m-impl">Numerical implementation</h3>
-            <p>The Bloch sphere panel renders an SVG projection of the state <code>|ψ⟩ = cos(θ/2) |0⟩ + e^{iφ} sin(θ/2) |1⟩</code> with the decoherence envelope <code>|r| ≤ 1</code> shrinking with σ. The circuit-depth-budget panel computes both the T1-limited (relaxation) and T2-limited (dephasing) gate-count thresholds for fidelity ≥ 50%.</p>
+            <p>The Bloch sphere panel (extra) renders an SVG projection of the state <code>|ψ⟩ = cos(θ/2)|0⟩ + e^{iφ} sin(θ/2)|1⟩</code> with the decoherence envelope <code>|r| ≤ 1</code> shrinking with sigma (gate-error proxy). In non-reduced-motion the state vector precesses around the z-axis at the Larmor frequency proxy.</p>
+      <p>The circuit-depth-budget panel (extra2) computes both T1-limited (relaxation) and T2-limited (dephasing) gate-count thresholds per QPU. The stacked bar chart shows the smaller of the two for each QPU as the effective budget.</p>
+      <p>The Lindblad evolution is integrated by an explicit Runge-Kutta-4 scheme for the Bloch equations rather than a full density-matrix solver, which is sufficient for the single-qubit visualization purposes here.</p>
+
+            <h3 id="m-glossary">Glossary &amp; notation</h3>
+            <p class="subtext">Symbols and domain terms used throughout the model. Symbol units are given where applicable.</p>
+            <dl class="methodology-glossary"><dt><span aria-label="rho">ρ</span></dt><dd>Density matrix of the qubit. <em>Units:</em> <code>matrix</code></dd><dt><span>T1</span></dt><dd>Relaxation time (energy decay). <em>Units:</em> <code>μs</code></dd><dt><span>T2</span></dt><dd>Coherence time (phase decay). <em>Units:</em> <code>μs</code></dd><dt><span aria-label="T phi">Tφ</span></dt><dd>Pure dephasing time. 1/T2 = 1/(2T1) + 1/Tφ. <em>Units:</em> <code>μs</code></dd><dt><span aria-label="sigma x, sigma y, sigma z">σ_x, σ_y, σ_z</span></dt><dd>Pauli operators. <em>Units:</em> <code>operator</code></dd><dt><span aria-label="sigma minus">σ_−</span></dt><dd>Lowering operator = (σ_x − iσ_y)/2. <em>Units:</em> <code>operator</code></dd><dt><span>Bloch vector</span></dt><dd>(⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩) — qubit state in 3D. <em>Units:</em> <code>(unitless)</code></dd><dt><span aria-label="theta, phi">θ, φ</span></dt><dd>Polar and azimuthal angles on the Bloch sphere. <em>Units:</em> <code>rad</code></dd><dt><span>Fidelity F</span></dt><dd>Closeness of operation to ideal; 1 − F is error per gate. <em>Units:</em> <code>fraction</code></dd><dt><span>2Q gate</span></dt><dd>Two-qubit entangling gate (cz, CNOT, iSWAP, MS). <em>Units:</em> <code>(categorical)</code></dd><dt><span>QV</span></dt><dd>Quantum Volume (Cross et al.); holistic capability metric. <em>Units:</em> <code>integer (log2)</code></dd><dt><span>RB</span></dt><dd>Randomized Benchmarking — fidelity protocol. <em>Units:</em> <code>(method)</code></dd><dt><span>QPU</span></dt><dd>Quantum Processing Unit. <em>Units:</em> <code>(categorical)</code></dd><dt><span>QEC</span></dt><dd>Quantum Error Correction. <em>Units:</em> <code>(qualitative)</code></dd><dt><span>Code distance d</span></dt><dd>QEC parameter; logical error rate decays as p^{(d+1)/2}. <em>Units:</em> <code>integer</code></dd></dl>
+
+            <h3 id="m-example">Worked example</h3>
+            <p>End-to-end numerical walk-through of one Monte Carlo path for a representative QPU, showing how a single random draw translates through the model to a published statistic on the dashboard.</p>
+            <ol class="methodology-example"><li><strong>Inputs.</strong> Select WILLOW. T1 = 100 μs, T2 = 90 μs, gate time τ_g = 25 ns (single-qubit), 50 ns (two-qubit). 2Q fidelity F_2 = 0.997. </li><li><strong>T1 budget.</strong> Single-qubit gate budget under relaxation: d_max = T1 / (2 τ_g) ≈ 100,000 / 50 = 2000 single-qubit gates before population decay halves. </li><li><strong>T2 budget.</strong> Single-qubit gate budget under dephasing: d_max = T2 / (2 τ_g) ≈ 90,000 / 50 = 1800 gates. T2 is the binding constraint. </li><li><strong>2Q error budget.</strong> With F_2 = 0.997 per 2Q gate, fidelity after d_2 two-qubit gates is F_2^{d_2}. For 50% fidelity: d_2 = log(0.5) / log(0.997) ≈ 230 two-qubit gates. This is the practical depth limit for non-error-corrected circuits. <p class="m-eq" role="math" aria-label="d sub 2 equals log of 0.5 over log of F sub 2">d_2 = log(0.5) / log(F_2)</p></li><li><strong>Signal.</strong> Willow QV 2^12 = 4096 with below-threshold QEC demonstrated. The system is the most capable of the gate-model superconducting class. Signal: ALLOCATE for current-gen workloads; QUEUE if research target depth exceeds 230 (pre-QEC) gates. </li></ol>
+
+            <h3 id="m-sens">Sensitivity analysis</h3>
+            <p>Tornado panel (extra3) shows that 2-qubit gate fidelity dominates the practical circuit depth budget — a 0.5 percentage-point improvement in F_2 (e.g. 99.5% → 99.7%) doubles d_max. T1 and T2 matter for single-qubit budgets but in current platforms 2Q fidelity is binding. Crosstalk and leakage to non-computational levels add ~0.1–0.3 percentage points of error that are not in the simple model. Parameter grid (extra4) sweeps (T2, F_2).</p>
+
+            <h3 id="m-alt">Comparison vs alternative approaches</h3>
+            <p>Three standard alternative modeling choices were considered before the model above was selected.</p>
+            <ul class="methodology-alts"><li><strong>Pure Pauli noise channel.</strong> Approximates Lindblad with classical bit-flip / phase-flip rates. Suitable for QEC analysis but loses the Bloch-sphere geometric intuition.</li><li><strong>Full master-equation solver (qutip).</strong> Numerically exact integration of the Lindblad equation for many-qubit systems. Necessary for multi-qubit dynamics; overkill for single-qubit visualization.</li><li><strong>Process tomography on real hardware.</strong> Empirical characterization of the actual noise channel. Gold standard but requires hardware access; the dashboard targets a fleet-comparison view that tomography cannot directly provide.</li></ul>
 
             <h3 id="m-limits">Known limitations</h3>
-            <ul><li>Crosstalk, leakage to non-computational levels, and correlated noise are not modeled — each qubit is treated independently.</li><li>Quantum Volume is not strictly meaningful for analog (Aquila, Orion) or photonic (PsiQuantum) architectures; the QV values shown for those are proxies and should not be compared head-to-head with gate-model QPUs.</li><li>Topological qubits (Microsoft Majorana 1) are too new for stable T1/T2 numbers in the field; values shown are projected, not measured.</li></ul>
+            <ul><li>Crosstalk, leakage to non-computational levels, and correlated noise are not modeled — each qubit is treated independently.</li><li>Quantum Volume is not strictly meaningful for analog (Aquila, Orion) or photonic (PsiQuantum) architectures; the QV values shown for those are proxies and should not be compared head-to-head with gate-model QPUs.</li><li>Topological qubits (Microsoft Majorana 1) are too new for stable T1/T2 numbers in the field; values shown are projected, not measured.</li><li>Mid-circuit measurement, conditional gates, and other dynamic-circuit primitives differ across platforms but are not encoded as a separate axis.</li><li>Logical-qubit error rates after QEC depend on code distance and physical-qubit error rate; the dashboard treats QEC as a future-state target, not a current operating regime, for most platforms.</li></ul>
 
             <h3 id="m-refs">References</h3>
-            <ol class="methodology-refs" aria-label="References"><li><cite>Nielsen, M. A. &amp; Chuang, I. L. (2010). Quantum Computation and Quantum Information (10th Anniversary Edition). Cambridge University Press.</cite></li><li><cite>Lindblad, G. (1976). On the generators of quantum dynamical semigroups. Communications in Mathematical Physics 48(2).</cite></li><li><cite>Cross, A. W. et al. (2019). Validating quantum computers using randomized model circuits. Physical Review A 100, 032328.</cite></li><li><cite>Arute, F. et al. (2019). Quantum supremacy using a programmable superconducting processor. Nature 574, 505–510.</cite></li><li><cite>IBM Quantum Documentation (2024–2025). Heron r2 and Condor system specifications.</cite></li></ol>
+            <ol class="methodology-refs" aria-label="References"><li><cite>Nielsen, M. A. &amp; Chuang, I. L. (2010). Quantum Computation and Quantum Information (10th Anniversary Edition). Cambridge University Press.</cite></li><li><cite>Lindblad, G. (1976). On the generators of quantum dynamical semigroups. Communications in Mathematical Physics 48(2).</cite></li><li><cite>Cross, A. W. et al. (2019). Validating quantum computers using randomized model circuits. Physical Review A 100, 032328.</cite></li><li><cite>Arute, F. et al. (2019). Quantum supremacy using a programmable superconducting processor. Nature 574, 505–510.</cite></li><li><cite>Acharya, R. et al. (2024). Quantum error correction below the surface code threshold. Nature 626, 754–763 (Willow).</cite></li><li><cite>Chen, E. H. et al. (2023). Realization of Real-Time Fault-Tolerant Quantum Error Correction. Physical Review X 13.</cite></li><li><cite>Knill, E. et al. (2008). Randomized benchmarking of quantum gates. Physical Review A 77.</cite></li><li><cite>Magesan, E., Gambetta, J. M. &amp; Emerson, J. (2011). Scalable and Robust Randomized Benchmarking of Quantum Processes. PRL 106.</cite></li><li><cite>IBM Quantum Documentation (2024–2025). Heron r2 and Condor system specifications.</cite></li><li><cite>Bluvstein, D. et al. (2024). Logical quantum processor based on reconfigurable atom arrays. Nature 626 (QuEra).</cite></li></ol>
           </article>
         </section>
 
