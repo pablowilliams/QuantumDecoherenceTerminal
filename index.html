@@ -4,26 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="dark" />
-<title>QuantumDecoherenceTerminal — QPU Fidelity Monitor</title>
-<meta name="description" content="Terminal-style Lindblad-master-equation Monte Carlo dashboard for QPUs (IBM Heron, Google Willow, IonQ Forte, Quantinuum H2, Rigetti, etc.) with T1/T2 decoherence, gate fidelity, and quantum-volume tracking." />
+<title>Coherence Notebook — QPU Fidelity Monitor</title>
+<meta name="description" content="Reproducible coherence scenarios for comparing simplified QPU noise, fidelity, and circuit-depth assumptions." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="identity.css" />
 </head>
 <body>
 
 <a href="#main" class="skip-link">Skip to main content</a>
-
-<!-- ===== Boot overlay ===== -->
-<div id="boot-overlay" class="boot-overlay" role="dialog" aria-modal="true" aria-labelledby="boot-title" hidden>
-  <div class="boot-inner">
-    <button type="button" id="boot-skip" class="boot-skip">Skip intro</button>
-    <h2 id="boot-title" class="sr-only">Terminal boot sequence</h2>
-    <pre id="boot-log" class="boot-log" aria-live="polite" aria-atomic="false"></pre>
-    <p class="boot-hint sr-only">Press Escape to skip the boot animation.</p>
-  </div>
-</div>
 
 <div class="app">
 
@@ -36,16 +27,16 @@
     <div id="ticker-tape-sr" class="sr-only" aria-live="off"></div>
   </div>
 
-  <!-- ===== Terminal top strip ===== -->
+  <!-- ===== Compact status strip ===== -->
   <div class="term-strip" role="status" aria-label="Session status">
     <span class="kv"><span class="brand-dot" aria-hidden="true"></span><span>QDT</span></span>
     <span class="kv"><span>WATCH</span> <span class="v" id="term-watch">10</span></span>
-    <span class="kv term-conn initializing" id="term-conn" aria-label="Data feed connection status">
+    <span class="kv term-conn initializing" id="term-conn" aria-label="Scenario data status">
       <span class="conn-shape" aria-hidden="true"></span>
       <span id="term-conn-label">INIT</span>
       <span class="v" id="term-conn-src">—</span>
     </span>
-    <span class="kv" id="term-mkt-wrap"><span>MKT</span> <span class="v" id="term-market" title="US equity market session">—</span></span>
+    <span class="kv" id="term-mkt-wrap"><span>MKT</span> <span class="v" id="term-market" title="US equity lab clock">—</span></span>
     <span class="kv"><span>HORIZON</span> <span class="v" id="term-horizon">30D</span></span>
     <span class="kv"><span>PATHS</span> <span class="v" id="term-paths">1K</span></span>
     <span class="kv"><span>SEED</span> <span class="v" id="term-seed">42</span></span>
@@ -56,7 +47,7 @@
   <!-- ===== Feed banner (only visible when real feed falls back) ===== -->
   <div id="feed-banner" class="feed-banner" role="status" hidden>
     <span class="feed-banner-icon" aria-hidden="true">!</span>
-    <span class="feed-banner-text" id="feed-banner-text">Live feed unavailable — showing simulated data.</span>
+    <span class="feed-banner-text" id="feed-banner-text">Scenario snapshot unavailable — using embedded seed data.</span>
     <button type="button" id="feed-retry" class="feed-btn">Retry</button>
     <button type="button" id="feed-dismiss" class="feed-btn feed-btn-icon" aria-label="Dismiss feed notice">×</button>
   </div>
@@ -67,12 +58,12 @@
   <!-- ===== Header ===== -->
   <header class="app-header" role="banner">
     <div>
-      <h1>QuantumDecoherenceTerminal // Terminal</h1>
-      <p class="subtitle">Monte Carlo dashboard for superconducting + trapped-ion quantum processors. Track T1/T2 decoherence, gate fidelity, circuit depth budget, and quantum-volume frontier.</p>
+      <h1>Coherence Notebook </h1>
+      <p class="subtitle">A small research interface for comparing simplified device-noise scenarios.</p>
     </div>
     <div class="header-meta" aria-label="Data status">
-      <span><span class="live-dot" aria-hidden="true"></span>Live ticks</span>
-      <span>Last update: <time id="last-update" datetime="">—</time></span>
+      <span><span class="live-dot" aria-hidden="true"></span>Scenario replay</span>
+      <span>Snapshot checked: <time id="last-update" datetime="">—</time></span>
     </div>
   </header>
 
@@ -81,10 +72,10 @@
     <section class="hero" aria-labelledby="hero-heading">
       <div class="hero-grid">
         <div class="hero-text">
-          <p class="hero-eyebrow"><span class="hero-dot" aria-hidden="true"></span> QDT · 12 QPUs · WCAG 2.2 AA</p>
-          <h2 id="hero-heading" class="hero-h">QuantumDecoherenceTerminal</h2>
-          <p class="hero-sub">Monte Carlo dashboard for superconducting + trapped-ion quantum processors. Track T1/T2 decoherence, gate fidelity, circuit depth budget, and quantum-volume frontier.</p>
-          <p class="hero-abstract">This dashboard implements a Lindblad master-equation inference layer over the global fleet of gate-model and analog quantum processors. The Lindblad open-quantum-system formalism (Lindblad, 1976) provides the canonical…</p>
+          <p class="hero-eyebrow"><span class="hero-dot" aria-hidden="true"></span> LAB NOTE 07 · 12 DEVICES · SYNTHETIC PROFILES</p>
+          <h2 id="hero-heading" class="hero-h">Coherence Notebook</h2>
+          <p class="hero-sub">Compare simplified coherence scenarios across five device architectures.</p>
+          <p class="hero-abstract">The notebook keeps its assumptions visible and its runs reproducible. The bundled profiles are synthetic and should not be read as vendor benchmarks.</p>
           <p class="hero-actions">
             <a class="hero-link" href="#dashboard-title" id="hero-skip">Skip to live dashboard ↓</a>
             <a class="hero-link" href="#methodology-section">Read methodology</a>
@@ -111,7 +102,7 @@
 
       <div class="strategy-bar">
         <fieldset class="strategy-fieldset">
-          <legend>Allocation strategies <span class="legend-hint">pick one or more — signals combine</span></legend>
+          <legend>Comparison lenses <span class="legend-hint">pick one or more — indicators combine</span></legend>
           <div class="strategy-options" id="strategy-options"></div>
         </fieldset>
       </div>
@@ -131,10 +122,10 @@
         <div class="field">
           <label for="horizon-select">Horizon</label>
           <select id="horizon-select">
-            <option value="5">5 trading days</option>
-            <option value="30" selected>30 trading days</option>
-            <option value="90">90 trading days</option>
-            <option value="252">252 trading days</option>
+            <option value="5">5 circuit cycles</option>
+            <option value="30" selected>30 circuit cycles</option>
+            <option value="90">90 circuit cycles</option>
+            <option value="252">252 circuit cycles</option>
           </select>
         </div>
         <div class="field">
@@ -150,7 +141,7 @@
       </div>
 
       <span id="live-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
-      <p id="status-line" class="status-line" aria-hidden="true">Ready. Select strategies and a ticker, then run a simulation.</p>
+      <p id="status-line" class="status-line" aria-hidden="true">Ready. Choose device inputs, then run the scenario.</p>
     </section>
 
     <!-- ===== Main grid: content + right rail ===== -->
@@ -158,11 +149,11 @@
 
       <div class="main-col">
 
-        <!-- ===== Portfolio KPIs ===== -->
+        <!-- ===== Summary metrics ===== -->
         <section aria-labelledby="perf-heading">
           <div class="section-header tight">
-            <h2 id="perf-heading">Portfolio performance</h2>
-            <span class="subtext">Equal-weight — all QPUs</span>
+            <h2 id="perf-heading">Device comparison</h2>
+            <span class="subtext">All modelled devices</span>
           </div>
           <div class="kpi-strip" id="kpi-strip"></div>
         </section>
@@ -171,17 +162,17 @@
         <section aria-labelledby="heatmap-heading" class="heatmap-section">
           <div class="section-header tight">
             <h2 id="heatmap-heading">Watchlist heatmap</h2>
-            <span class="subtext">Tile color = today change · size = portfolio weight</span>
+            <span class="subtext">Colour = latest modelled change · size = relative Q-volume</span>
           </div>
           <div class="heatmap" id="heatmap" role="list" aria-label="Watchlist heatmap by today's change"></div>
         </section>
 
-        <!-- ===== Individual stocks ===== -->
+        <!-- ===== Device catalogue ===== -->
         <section class="section" aria-labelledby="stocks-heading">
           <div class="section-header">
             <div>
-              <h2 id="stocks-heading">Individual QPUs // tracked</h2>
-              <p class="subtext">Every QPU tracked in the QDT dashboard. Action column = combined signal (ALLOCATE / DEPRECATE / QUEUE) from your selected strategies. Click a row to drill down.</p>
+              <h2 id="stocks-heading">Device catalogue</h2>
+              <p class="subtext">The synthetic profiles used in this notebook. Comparison status combines the selected lenses; choose a row for detail.</p>
             </div>
             <span id="aggregate-signal" aria-live="polite"></span>
           </div>
@@ -206,14 +197,14 @@
               <tbody id="stocks-body"></tbody>
             </table>
           </div>
-          <p class="table-help subtext" id="table-help">Tip: click any row or press Enter on a focused row to select that ticker.</p>
+          <p class="table-help subtext" id="table-help">Choose a row, or press Enter from the keyboard, to inspect a device.</p>
         </section>
 
         <!-- ===== Detail for selected ticker ===== -->
         <section class="section" aria-labelledby="detail-heading" id="detail-section">
           <div class="section-header">
             <div>
-              <h2 id="detail-heading">Detail // <span id="detail-ticker">—</span> <span id="detail-name" class="subtext"></span></h2>
+              <h2 id="detail-heading">Device detail · <span id="detail-ticker">—</span> <span id="detail-name" class="subtext"></span></h2>
               <p class="subtext" id="detail-subtitle">Click a row in the table above to drill into a specific QPU.</p>
             </div>
             <span id="detail-signal" aria-live="polite"></span>
@@ -224,7 +215,7 @@
               <span class="chart-crt-layer" aria-hidden="true"></span>
               <h3 id="mc-heading">Monte Carlo price paths</h3>
               <div id="mc-chart" role="img" aria-label="Loading chart" tabindex="0" aria-describedby="mc-crosshair-help"></div>
-              <p id="mc-crosshair-help" class="sr-only">Use left and right arrow keys to move the crosshair across trading days; press Home or End to jump to first or last day.</p>
+              <p id="mc-crosshair-help" class="sr-only">Use left and right arrow keys to move the crosshair across circuit cycles; press Home or End to jump to first or last day.</p>
               <div id="mc-crosshair-sr" class="sr-only" aria-live="polite" aria-atomic="true"></div>
               <figcaption id="mc-caption">Run a simulation to see projected price paths.</figcaption>
               <table class="sr-only" id="mc-data-table" aria-label="Monte Carlo summary statistics">
@@ -264,7 +255,7 @@
           </div>
 
           <div>
-            <h3 id="strategy-breakdown-heading">Per-strategy signals // <span id="detail-ticker-2">—</span></h3>
+            <h3 id="strategy-breakdown-heading">Comparison breakdown · <span id="detail-ticker-2">—</span></h3>
             <div class="strategy-grid" id="strategy-grid" aria-labelledby="strategy-breakdown-heading"></div>
           </div>
         </section>
@@ -291,8 +282,8 @@
           <p class="rail-box-sub" id="rail-winrate-sub">Pr(MC final &gt; entry)</p>
         </div>
         <div class="rail-box gauge-box" id="rail-sharpe">
-          <p class="rail-box-label">Sharpe</p>
-          <div class="gauge-wrap" id="gauge-sharpe" role="img" aria-label="Sharpe gauge">
+          <p class="rail-box-label">Stability ratio</p>
+          <div class="gauge-wrap" id="gauge-sharpe" role="img" aria-label="Stability ratio gauge">
             <svg class="gauge" viewBox="0 0 120 68" aria-hidden="true">
               <path class="gauge-track" d="M10,60 A50,50 0 0,1 110,60"/>
               <path class="gauge-fill" id="gauge-sharpe-arc" d="M10,60 A50,50 0 0,1 110,60"/>
@@ -302,12 +293,12 @@
             </svg>
           </div>
           <p class="rail-box-value" id="rail-sharpe-val">—</p>
-          <p class="rail-box-sub" id="rail-sharpe-sub">Ex-ante · rf 4.5%</p>
+          <p class="rail-box-sub" id="rail-sharpe-sub">Normalised dispersion</p>
         </div>
         <div class="rail-box" id="rail-er">
           <p class="rail-box-label">E[R]</p>
           <p class="rail-box-value" id="rail-er-val">—</p>
-          <p class="rail-box-sub" id="rail-er-sub">Portfolio, 30d</p>
+          <p class="rail-box-sub" id="rail-er-sub">Device set · 30d</p>
         </div>
         <div class="rail-box down gauge-box" id="rail-var">
           <p class="rail-box-label">VaR 95%</p>
@@ -381,97 +372,16 @@
           <table class="sr-only" id="extra4-data-table"><caption>Parameter-grid heatmap values</caption><thead><tr><th scope="col">T2 (μs)</th><th scope="col">F_2 (%)</th><th scope="col">Outcome (d_max (gates @ 50% fidelity))</th></tr></thead><tbody id="extra4-data-body"></tbody></table>
         </section>
         <section class="section methodology" aria-labelledby="methodology-heading" id="methodology-section">
-          <div class="section-header">
-            <div>
-              <h2 id="methodology-heading">Methodology &amp; model</h2>
-              <p class="subtext">Dissertation-grade technical write-up of the stochastic process, calibration, glossary, worked example, sensitivity analysis, comparison to alternatives, and references for the QPU layer of this dashboard.</p>
-            </div>
-            <span class="subtext">WCAG 2.2 AA · 10 citations</span>
-          </div>
-
-          <nav aria-labelledby="methodology-toc-heading" class="methodology-toc">
-            <h3 id="methodology-toc-heading">On this page</h3>
-            <ol>
-              <li><a href="#m-abstract">Abstract</a></li>
-              <li><a href="#m-model">Stochastic model</a></li>
-              <li><a href="#m-calib">Calibration</a></li>
-              <li><a href="#m-impl">Numerical implementation</a></li>
-              <li><a href="#m-glossary">Glossary &amp; notation</a></li>
-              <li><a href="#m-example">Worked example</a></li>
-              <li><a href="#m-sens">Sensitivity analysis</a></li>
-              <li><a href="#m-alt">Comparison vs alternative approaches</a></li>
-              <li><a href="#m-valid">Empirical validation</a></li>
-              <li><a href="#m-limits">Known limitations</a></li>
-              <li><a href="#m-future">Open questions &amp; future work</a></li>
-              <li><a href="#m-code">Code &amp; data</a></li>
-              <li><a href="#m-refs">References</a></li>
-            </ol>
-          </nav>
-
+          <div class="section-header"><div><h2 id="methodology-heading">How the notebook works</h2><p class="subtext">The simplified model, repeatability contract, and benchmark limits.</p></div><span class="subtext">Deterministic browser model</span></div>
           <article class="methodology-article">
-            <h3 id="m-abstract">Abstract</h3>
-            <p>This dashboard implements a Lindblad master-equation inference layer over the global fleet of gate-model and analog quantum processors. The Lindblad open-quantum-system formalism (<cite>Lindblad, 1976</cite>) provides the canonical noise model for superconducting, trapped-ion, and neutral-atom qubits, parameterized by relaxation T1 and dephasing T2 (<cite>Nielsen &amp; Chuang, 2010</cite>). Per-platform T1, T2, and two-qubit gate fidelity are seeded from manufacturer disclosures and peer-reviewed publications including the Willow below-threshold-QEC demonstration (<cite>Acharya et al., 2024</cite>) and Cross et al.'s Quantum Volume benchmark (<cite>Cross et al., 2019</cite>). Pauli-channel approximations were rejected because they cannot reproduce the geometric Bloch-sphere intuition critical for the visualization layer.</p>
-
-            <h3 id="m-model">Stochastic model</h3>
-            <p>A single qubit interacting with a noisy environment loses quantum coherence on two characteristic timescales: <em>T1</em> (energy relaxation; population decay from |1⟩ to |0⟩) and <em>T2</em> (phase coherence loss). The two are linked by <code>1/T2 = 1/(2T1) + 1/Tφ</code> where <code>Tφ</code> is the pure dephasing time. T2 ≤ 2T1 is a fundamental physical bound. For useful computation we need T2 to vastly exceed the gate operation time.</p>
-      <p>The dynamics of a qubit's density matrix <code>ρ</code> under both unitary Hamiltonian <code>H</code> and decoherence is the Lindblad master equation:</p>
-      <p class="m-eq"><span role="math" aria-label="d rho d t equals minus i commutator H rho plus 1 over T1 dissipator sigma minus rho plus 1 over 2 T phi dissipator sigma z rho">dρ/dt = −i [H, ρ] + (1/T1) D[σ_−] ρ + (1/(2 Tφ)) D[σ_z] ρ</span></p>
-      <p>The Lindblad dissipator is <code>D[L]ρ = LρL† − ½{L†L, ρ}</code>; <code>σ_−</code> drives relaxation and <code>σ_z</code> drives pure dephasing. The Bloch vector <code>(x, y, z) = (⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩)</code> evolves under the Bloch equations:</p>
-      <p class="m-eq"><span role="math" aria-label="derivative of x equals minus x over T2, derivative of y equals minus y over T2, derivative of z equals minus z minus z equilibrium over T1">dx/dt = −x/T2,  dy/dt = −y/T2,  dz/dt = −(z − z_eq)/T1</span></p>
-      <p>where <code>z_eq</code> is the equilibrium population difference (typically <code>z_eq = 1</code> for a cold qubit). The Bloch vector magnitude <code>|r|</code> shrinks toward the z-axis under pure dephasing and toward the equilibrium z-pole under relaxation. A coherent state has <code>|r| = 1</code> (pure state on the Bloch sphere surface); a maximally mixed state has <code>|r| = 0</code> (center of the sphere).</p>
-      <p>For a circuit of depth <code>d</code> with per-gate time <code>τ_g</code>, total runtime is <code>τ_total = d · τ_g</code>. The leading-order fidelity loss is <code>1 − F ≈ τ_total · (1/T1 + 1/(2T2))</code>. Setting this ≤ 0.5 gives the <em>gate budget</em>: <code>d_max ≈ 0.5 / (τ_g · (1/T1 + 1/(2T2)))</code>. For Heron r2 with T1 = 250 μs, T2 = 200 μs, τ_g = 100 ns this gives <code>d_max ≈ 670 gates</code> per single-qubit register — but two-qubit gates have fidelity floors (currently 99.5–99.9%) that dominate the budget in practice.</p>
-      <p>Quantum Volume (Cross et al. 2019) is a holistic benchmark: the largest square circuit (depth = width) for which the QPU can compute heavy-output probability above the threshold. QV doubles every ~9 months on the leading platforms (Heron, Willow, H2). For neutral-atom analog systems QV is not directly meaningful and we use circuit-layer-fidelity as a proxy.</p>
-
-            <h3 id="m-calib">Calibration</h3>
-            <p>Per-QPU T1, T2, gate time, and 2-qubit gate fidelity are calibrated from manufacturer disclosures and peer-reviewed publications: IBM Quantum Network (Heron r2, Condor 1121), Google Quantum AI (Willow 105q), IonQ Performance Report (Forte 36-ion), Quantinuum H-Series Update (H2-1 56-ion), Rigetti Quantum Cloud Services (Ankaa-3 84q), QuEra (Aquila 256-atom), Atom Computing (1180-atom), Pasqal (Orion 100-atom), Microsoft Majorana 1 (topological), Fujitsu/RIKEN (256q).</p>
-      <p>Representative values: Willow T1 ~ 100 μs, T2 ~ 90 μs, 2-qubit gate fidelity 99.7% (Acharya et al. 2024). Heron r2 T1 ~ 250 μs, T2 ~ 200 μs, 2-qubit cz fidelity 99.7%. H2-1 T1 effectively infinite for ions, T2 ~ 1 sec, 2-qubit fidelity 99.85%. The wide T1/T2 range across platforms reflects fundamentally different qubit modalities.</p>
-      <p>The Quantum Volume values for analog/photonic systems are proxies based on representative-circuit fidelity at depth = width = N and should not be compared head-to-head with gate-model QV. We flag this explicitly in the dashboard's limitations panel.</p>
-
-            <h3 id="m-impl">Numerical implementation</h3>
-            <p>The Bloch sphere panel (extra) renders an SVG projection of the state <code>|ψ⟩ = cos(θ/2)|0⟩ + e^{iφ} sin(θ/2)|1⟩</code> with the decoherence envelope <code>|r| ≤ 1</code> shrinking with sigma (gate-error proxy). In non-reduced-motion the state vector precesses around the z-axis at the Larmor frequency proxy.</p>
-      <p>The circuit-depth-budget panel (extra2) computes both T1-limited (relaxation) and T2-limited (dephasing) gate-count thresholds per QPU. The stacked bar chart shows the smaller of the two for each QPU as the effective budget.</p>
-      <p>The Lindblad evolution is integrated by an explicit Runge-Kutta-4 scheme for the Bloch equations rather than a full density-matrix solver, which is sufficient for the single-qubit visualization purposes here.</p>
-
-            <h3 id="m-glossary">Glossary &amp; notation</h3>
-            <p class="subtext">Symbols and domain terms used throughout the model. Symbol units are given where applicable.</p>
-            <dl class="methodology-glossary"><dt><span aria-label="rho">ρ</span></dt><dd>Density matrix of the qubit. <em>Units:</em> <code>matrix</code></dd><dt><span>T1</span></dt><dd>Relaxation time (energy decay). <em>Units:</em> <code>μs</code></dd><dt><span>T2</span></dt><dd>Coherence time (phase decay). <em>Units:</em> <code>μs</code></dd><dt><span aria-label="T phi">Tφ</span></dt><dd>Pure dephasing time. 1/T2 = 1/(2T1) + 1/Tφ. <em>Units:</em> <code>μs</code></dd><dt><span aria-label="sigma x, sigma y, sigma z">σ_x, σ_y, σ_z</span></dt><dd>Pauli operators. <em>Units:</em> <code>operator</code></dd><dt><span aria-label="sigma minus">σ_−</span></dt><dd>Lowering operator = (σ_x − iσ_y)/2. <em>Units:</em> <code>operator</code></dd><dt><span>Bloch vector</span></dt><dd>(⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩) — qubit state in 3D. <em>Units:</em> <code>(unitless)</code></dd><dt><span aria-label="theta, phi">θ, φ</span></dt><dd>Polar and azimuthal angles on the Bloch sphere. <em>Units:</em> <code>rad</code></dd><dt><span>Fidelity F</span></dt><dd>Closeness of operation to ideal; 1 − F is error per gate. <em>Units:</em> <code>fraction</code></dd><dt><span>2Q gate</span></dt><dd>Two-qubit entangling gate (cz, CNOT, iSWAP, MS). <em>Units:</em> <code>(categorical)</code></dd><dt><span>QV</span></dt><dd>Quantum Volume (Cross et al.); holistic capability metric. <em>Units:</em> <code>integer (log2)</code></dd><dt><span>RB</span></dt><dd>Randomized Benchmarking — fidelity protocol. <em>Units:</em> <code>(method)</code></dd><dt><span>QPU</span></dt><dd>Quantum Processing Unit. <em>Units:</em> <code>(categorical)</code></dd><dt><span>QEC</span></dt><dd>Quantum Error Correction. <em>Units:</em> <code>(qualitative)</code></dd><dt><span>Code distance d</span></dt><dd>QEC parameter; logical error rate decays as p^{(d+1)/2}. <em>Units:</em> <code>integer</code></dd></dl>
-
-            <h3 id="m-example">Worked example</h3>
-            <p>End-to-end numerical walk-through of one Monte Carlo path for a representative QPU, showing how a single random draw translates through the model to a published statistic on the dashboard.</p>
-            <ol class="methodology-example"><li><strong>Inputs.</strong> Select WILLOW. T1 = 100 μs, T2 = 90 μs, gate time τ_g = 25 ns (single-qubit), 50 ns (two-qubit). 2Q fidelity F_2 = 0.997. </li><li><strong>T1 budget.</strong> Single-qubit gate budget under relaxation: d_max = T1 / (2 τ_g) ≈ 100,000 / 50 = 2000 single-qubit gates before population decay halves. </li><li><strong>T2 budget.</strong> Single-qubit gate budget under dephasing: d_max = T2 / (2 τ_g) ≈ 90,000 / 50 = 1800 gates. T2 is the binding constraint. </li><li><strong>2Q error budget.</strong> With F_2 = 0.997 per 2Q gate, fidelity after d_2 two-qubit gates is F_2^{d_2}. For 50% fidelity: d_2 = log(0.5) / log(0.997) ≈ 230 two-qubit gates. This is the practical depth limit for non-error-corrected circuits. <p class="m-eq" role="math" aria-label="d sub 2 equals log of 0.5 over log of F sub 2">d_2 = log(0.5) / log(F_2)</p></li><li><strong>Signal.</strong> Willow QV 2^12 = 4096 with below-threshold QEC demonstrated. The system is the most capable of the gate-model superconducting class. Signal: ALLOCATE for current-gen workloads; QUEUE if research target depth exceeds 230 (pre-QEC) gates. </li></ol>
-
-            <h3 id="m-sens">Sensitivity analysis</h3>
-            <p>Tornado panel (extra3) shows that 2-qubit gate fidelity dominates the practical circuit depth budget — a 0.5 percentage-point improvement in F_2 (e.g. 99.5% → 99.7%) doubles d_max. T1 and T2 matter for single-qubit budgets but in current platforms 2Q fidelity is binding. Crosstalk and leakage to non-computational levels add ~0.1–0.3 percentage points of error that are not in the simple model. Parameter grid (extra4) sweeps (T2, F_2).</p>
-
-            <h3 id="m-alt">Comparison vs alternative approaches</h3>
-            <p>Three standard alternative modeling choices were considered before the model above was selected.</p>
-            <ul class="methodology-alts"><li><strong>Pure Pauli noise channel.</strong> Approximates Lindblad with classical bit-flip / phase-flip rates. Suitable for QEC analysis but loses the Bloch-sphere geometric intuition.</li><li><strong>Full master-equation solver (qutip).</strong> Numerically exact integration of the Lindblad equation for many-qubit systems. Necessary for multi-qubit dynamics; overkill for single-qubit visualization.</li><li><strong>Process tomography on real hardware.</strong> Empirical characterization of the actual noise channel. Gold standard but requires hardware access; the dashboard targets a fleet-comparison view that tomography cannot directly provide.</li></ul>
-
-            <h3 id="m-valid">Empirical validation</h3>
-            <p>Held-out backtest against the most recent calibration window: 70% in-sample / 30% out-of-sample split with walk-forward re-fitting at quarterly cadence. The dashboard's primary forward statistic tracks observed ground-truth within the stated 95% credible band for ≥87% of test periods, consistent with the model's nominal coverage. Re-calibration cadence is documented under "Calibration".</p>
-
-            <h3 id="m-limits">Known limitations</h3>
-            <ul><li>Crosstalk, leakage to non-computational levels, and correlated noise are not modeled — each qubit is treated independently.</li><li>Quantum Volume is not strictly meaningful for analog (Aquila, Orion) or photonic (PsiQuantum) architectures; the QV values shown for those are proxies and should not be compared head-to-head with gate-model QPUs.</li><li>Topological qubits (Microsoft Majorana 1) are too new for stable T1/T2 numbers in the field; values shown are projected, not measured.</li><li>Mid-circuit measurement, conditional gates, and other dynamic-circuit primitives differ across platforms but are not encoded as a separate axis.</li><li>Logical-qubit error rates after QEC depend on code distance and physical-qubit error rate; the dashboard treats QEC as a future-state target, not a current operating regime, for most platforms.</li></ul>
-
-            <h3 id="m-future">Open questions &amp; future work</h3>
-            <ul class="methodology-future">
-                  <li>Extend the model to admit non-stationary regime shifts via hidden-Markov augmentation.</li>
-                  <li>Cross-domain transfer learning from analogous calibrated entities to reduce cold-start uncertainty.</li>
-                  <li>Bayesian hierarchical pooling to share strength across the QPUs cohort.</li>
-                  <li>Real-time recalibration from a streaming data source replacing the static snapshot.</li>
-                  <li>User-configurable parameter sliders bound to a live re-run of the Monte Carlo engine.</li>
-                </ul>
-
-            <h3 id="m-code">Code &amp; data</h3>
-            <p>The full source for the Monte Carlo engine, calibration notebook, and per-QPU parameter table is available at the project's <a href="https://github.com/pablowilliams/QuantumDecoherenceTerminal" rel="noopener">GitHub repository</a>. A reproducibility Jupyter notebook is planned for release alongside the next snapshot.</p>
-              <ul class="methodology-code">
-                <li><a href="https://github.com/pablowilliams/QuantumDecoherenceTerminal/blob/main/app.js" rel="noopener"><code>app.js</code></a> — engine, calibration, and rendering</li>
-                <li><a href="https://github.com/pablowilliams/QuantumDecoherenceTerminal/blob/main/data/quotes.json" rel="noopener"><code>data/quotes.json</code></a> — synthetic snapshot, refreshed every 6h by GitHub Action</li>
-                <li><a href="https://github.com/pablowilliams/QuantumDecoherenceTerminal/blob/main/.github/workflows/refresh-data.yml" rel="noopener"><code>.github/workflows/refresh-data.yml</code></a> — refresh cadence workflow</li>
-              </ul>
-
-            <h3 id="m-refs">References</h3>
-            <ol class="methodology-refs" aria-label="References"><li><cite>Nielsen, M. A. &amp; Chuang, I. L. (2010). Quantum Computation and Quantum Information (10th Anniversary Edition). Cambridge University Press.</cite></li><li><cite>Lindblad, G. (1976). On the generators of quantum dynamical semigroups. Communications in Mathematical Physics 48(2).</cite></li><li><cite>Cross, A. W. et al. (2019). Validating quantum computers using randomized model circuits. Physical Review A 100, 032328.</cite></li><li><cite>Arute, F. et al. (2019). Quantum supremacy using a programmable superconducting processor. Nature 574, 505–510.</cite></li><li><cite>Acharya, R. et al. (2024). Quantum error correction below the surface code threshold. Nature 626, 754–763 (Willow).</cite></li><li><cite>Chen, E. H. et al. (2023). Realization of Real-Time Fault-Tolerant Quantum Error Correction. Physical Review X 13.</cite></li><li><cite>Knill, E. et al. (2008). Randomized benchmarking of quantum gates. Physical Review A 77.</cite></li><li><cite>Magesan, E., Gambetta, J. M. &amp; Emerson, J. (2011). Scalable and Robust Randomized Benchmarking of Quantum Processes. PRL 106.</cite></li><li><cite>IBM Quantum Documentation (2024–2025). Heron r2 and Condor system specifications.</cite></li><li><cite>Bluvstein, D. et al. (2024). Logical quantum processor based on reconfigurable atom arrays. Nature 626 (QuEra).</cite></li></ol>
+            <h3>Calculation</h3>
+            <p>Each device profile contains a synthetic index, drift, and dispersion. A seeded lognormal path generator produces comparison ranges. The Bloch, decay, and circuit-depth panels are deterministic teaching visualisations rather than a hardware simulator.</p>
+            <h3>Reproducibility</h3>
+            <p>The profiles are committed with the source. Holding the device, horizon, path count, and seed constant produces the same output.</p>
+            <h3>Limits</h3>
+            <ul><li>No vendor calibration endpoint or experimental run data is connected.</li><li>The aggregate index is not an industry-standard hardware score.</li><li>The model does not solve a Lindblad master equation.</li><li>No vendor ranking, empirical backtest, or performance claim is made.</li></ul>
+            <h3>Source</h3>
+            <p>Review the <a href="https://github.com/pablowilliams/coherence-notebook/blob/main/app.js" rel="noopener">browser implementation</a> and <a href="https://github.com/pablowilliams/coherence-notebook/blob/main/data/quotes.json" rel="noopener">versioned device profiles</a>.</p>
           </article>
         </section>
 
@@ -495,8 +405,8 @@
   </svg>
 
   <footer class="app-footer" role="contentinfo">
-    <span>MC engine: Geometric Brownian Motion // QDT sentiment (simulated) // WCAG 2.2 AA</span>
-    <span class="brand-mark">QDT<span class="dot">.</span></span>
+    <span>Seeded coherence study · synthetic profiles · not a vendor benchmark</span>
+    <span class="brand-mark">CN<span class="dot">.</span></span>
   </footer>
 
 </div>

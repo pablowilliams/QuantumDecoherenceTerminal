@@ -1,0 +1,12 @@
+/* Coherence Notebook: quiet research-notebook presentation. */
+:root { --bg:#f3f0e8; --bg-elev-1:#fbfaf6; --bg-elev-2:#f7f4ed; --bg-elev-3:#e9e4d9; --border:#d7d0c2; --border-strong:#a99eb2; --text:#27232d; --text-muted:#6f6875; --text-dim:#8a818f; --accent:#6750a4; --accent-dim:#4d3b7d; --accent-bg:rgba(103,80,164,.09); --focus:#6750a4; --font-sans:Georgia,"Times New Roman",serif; --font-mono:"Space Mono",ui-monospace,monospace; --r:10px; }
+html,body { background:var(--bg); color:var(--text); }
+body::before,body::after,.ticker-tape-wrap,.term-strip { display:none!important; }
+.app { max-width:1240px; padding:34px 30px 64px; }
+.app-header { border-bottom:1px solid var(--text); }
+.app-header h1 { color:var(--text); font:600 20px/1.2 var(--font-sans); letter-spacing:0; text-transform:none; }
+.hero { background:transparent; border:0; border-bottom:1px solid var(--border-strong); border-radius:0; padding-inline:0; }
+.hero-h { font:500 clamp(38px,6vw,76px)/.98 var(--font-sans); letter-spacing:-.04em; text-transform:none; }
+.section,.controls-block { background:var(--bg-elev-1); border-color:var(--border); box-shadow:0 1px 0 rgba(39,35,45,.04); }
+.section h2,.section h3,.section h4 { color:var(--text); font-family:var(--font-sans); text-transform:none; letter-spacing:0; }
+
